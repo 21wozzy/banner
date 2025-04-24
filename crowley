@@ -1,82 +1,80 @@
-# Enable ANSI colors
+pkg install zsh git fzf -y
+git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.zsh/zsh-syntax-highlighting
+git clone https://github.com/zsh-users/zsh-completions ~/.zsh/zsh-completions
+chsh -s zsh
+# Enable colors
 autoload -U colors && colors
+autoload -Uz compinit && compinit
+fpath+=~/.zsh/zsh-completions/src
 
-# Random color on each session
-typeset -a colors
-colors=(red green yellow blue magenta cyan)
-RANDOM_COLOR=$colors[$((RANDOM % ${#colors[@]} + 1))]
-
-# Colored prompt
+# Multicolor prompt (custom user@host like Remo)
 setopt PROMPT_SUBST
-PROMPT='%F{$RANDOM_COLOR}%n@%m %F{yellow}%~ %f
+PROMPT='%F{magenta}crowley@Termux %F{cyan}%~ %f$(git_prompt_info)
 %F{green}❯%f '
 
-# Cursor vertical
-printf '\e[4 q'
-
-# Run updates automatically
-echo -e "\e[1;32m[INFO] Updating packages...\e[0m"
-apt update -y && apt upgrade -y
-pkg update -y && pkg upgrade -y
-echo -e "\e[1;32m[SUCCESS] Packages updated.\e[0m"
-
-# Banner (ASCII + colors)
-echo -e "\e[1;${RANDOM}m"
-echo "┌──────────────────────────────────────────────────────────────────────────────────────────┐"
-echo "│                                                                                          │"
-echo "│    ██████╗██████╗  ██████╗ ██╗    ██╗██╗     ███████╗██╗   ██╗                            │"
-echo "│   ██╔════╝██╔══██╗██╔═══██╗██║    ██║██║     ██╔════╝╚██╗ ██╔╝                            │"
-echo "│   ██║     ██████╔╝██║   ██║██║ █╗ ██║██║     █████╗   ╚████╔╝                             │"
-echo "│   ██║     ██╔══██╗██║   ██║██║███╗██║██║     ██╔══╝    ╚██╔╝                              │"
-echo "│   ╚██████╗██║  ██║╚██████╔╝╚███╔███╔╝███████╗███████╗   ██║                               │"
-echo "│    ╚═════╝╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝╚══════╝   ╚═╝                               │"
-echo "│                                                                                          │"
-echo "│               created by Crowley. Welcome back, commander.                              │"
-echo "└──────────────────────────────────────────────────────────────────────────────────────────┘"
-echo -e "\e[0m"
-
-# ASCII art with colors
-echo -e "\e[0;37m"
-echo '                                            ..............'
-echo '                                                     ..,;:ccc,.'
-echo "                                                   ......\`lxO."
-echo "                                         ..''''..........,:ld;"
-echo '                                                    .`;;;:::;,,.x,'
-echo '                                               ..```.            0Xxoc:,.  ...'
-echo '                                           ....                ,ONkc;,;cokOdc.-'
-echo '                                          .                   OMo           .:ddo.'
-echo '                                                             dMc               :OO;'
-echo '                                                             0M.                 .:o.'
-echo '                                                             ;Wd'
-echo '                                                              ;XO,'
-echo '                                                                ,d0Odlc;,..'
-echo '                                                                    ..`,;:cdOOd::,.'
-echo '                                                                            .:d;.`:;.'
-echo '                                                                                `d,  .`'
-echo '                                                                                  ;l   ..'
-echo '                                                                                        .o'
-echo '                                                                                     c'
-echo '                                                                                     .`'
-echo '                                                                                      .'
-echo -e "\e[0;36m         ig: croowleey"
-echo "     tiktok: croowleyy"
-echo "    discord: 21wozy"
-echo "   we all bleed the same..."
-echo -e "\e[0m"
-
-# Plugins: Autosuggestions & Syntax Highlighting
+# Autosuggestions (predictive style like VS Code)
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
-ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+ZSH_AUTOSUGGEST_STRATEGY=(completion)
 ZSH_AUTOSUGGEST_ACCEPT_ON_RIGHT_ARROW=1
 
+# Syntax highlighting
 source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main)
 
-# History config
+# Completions engine (intelligent suggestions)
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
+# History
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
 
-# Final message
-echo -e "\e[1;34m[INIT] System initialized. All modules deployed successfully. Welcome to your command center.\e[0m"
+# Fancy vertical bar cursor
+printf '\e[4 q'
+
+# Auto update system after banner
+(apt update && apt upgrade -y && pkg update && pkg upgrade -y) > /dev/null 2>&1 &
+
+# Banner (multicolor style)
+print -P "%F{blue}┌────────────────────────────────────────────────────────────────────────────────────────────┐"
+print -P "%F{blue}│                                                                                          │"
+print -P "%F{red}│     ██████╗██████╗  ██████╗ ██╗    ██╗██╗     ███████╗██╗   ██╗                          %F{blue}│"
+print -P "%F{red}│    ██╔════╝██╔══██╗██╔═══██╗██║    ██║██║     ██╔════╝╚██╗ ██╔╝                          %F{blue}│"
+print -P "%F{red}│    ██║     ██████╔╝██║   ██║██║ █╗ ██║██║     █████╗   ╚████╔╝                           %F{blue}│"
+print -P "%F{red}│    ██║     ██╔══██╗██║   ██║██║███╗██║██║     ██╔══╝    ╚██╔╝                            %F{blue}│"
+print -P "%F{red}│    ╚██████╗██║  ██║╚██████╔╝╚███╔███╔╝███████╗███████╗   ██║                             %F{blue}│"
+print -P "%F{red}│     ╚═════╝╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝╚══════╝   ╚═╝                             %F{blue}│"
+print -P "%F{blue}│                                                                     %F{yellow}created by crowley %F{blue}│"
+print -P "%F{blue}└────────────────────────────────────────────────────────────────────────────────────────────┘%f"
+
+# Kali icon
+print -P "%F{white}         .............."
+print -P "                  ..,;:ccc,."
+print -P "                ......''`lxO."
+print -P "      .....''''..........,:ld;"
+print -P "             .`;;;:::;,,.x,"
+print -P "        ..```.            0Xxoc:,.  ..."
+print -P "    ....                ,ONkc;,;cokOdc.-"
+print -P "   .                   OMo           .:ddo."
+print -P "                      dMc               :OO;"
+print -P "                      0M.                 .:o."
+print -P "                      ;Wd"
+print -P "                       ;XO,"
+print -P "                         ,d0Odlc;,.."
+print -P "                             ..`,;:cdOOd::,."
+print -P "                                     .:d;.`:;."
+print -P "                                         `d,  .`"
+print -P "                                           ;l   .."
+print -P "                                                 .o"
+print -P "                                              c"
+print -P "                                              .`"
+print -P "                                               .%f"
+
+# Socials
+print -P "%F{cyan}       ig: crowleey"
+print -P "   tiktok: croowleyy"
+print -P "  discord: 21wozy"
+print -P "%F{yellow} we all bleed the same...%f"
