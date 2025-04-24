@@ -1,77 +1,82 @@
 # Enable ANSI colors
 autoload -U colors && colors
 
-# Random color each session (Remo7777 style)
-colors=(31 32 33 34 35 36 91 92 93 94 95 96)
-rand=$(( RANDOM % ${#colors[@]} ))
-color="\e[1;${colors[$rand]}m"
+# Random color on each session
+typeset -a colors
+colors=(red green yellow blue magenta cyan)
+RANDOM_COLOR=$colors[$((RANDOM % ${#colors[@]} + 1))]
 
-# Fancy prompt with git info
+# Colored prompt
 setopt PROMPT_SUBST
-PROMPT='%F{cyan}%n@%m %F{yellow}%~ %f$(git_prompt_info)
+PROMPT='%F{$RANDOM_COLOR}%n@%m %F{yellow}%~ %f
 %F{green}❯%f '
 
-# Predictive autosuggestions (in grey)
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
-ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-ZSH_AUTOSUGGEST_ACCEPT_ON_RIGHT_ARROW=1
-
-# Syntax highlighting (green = valid, red = error)
-source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-ZSH_HIGHLIGHT_HIGHLIGHTERS=(main)
-
-# Long history
-HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
-
-# Vertical bar cursor (looks sleek)
+# Cursor vertical
 printf '\e[4 q'
 
-# BANNER with style and credit
-echo -e "$color"
-echo "┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐"
-echo "│                                                                                                                     │"
-echo "│                             ██████╗██████╗  ██████╗ ██╗    ██╗██╗     ███████╗██╗   ██╗                             │"
-echo "│                            ██╔════╝██╔══██╗██╔═══██╗██║    ██║██║     ██╔════╝╚██╗ ██╔╝                             │"
-echo "│                            ██║     ██████╔╝██║   ██║██║ █╗ ██║██║     █████╗   ╚████╔╝                              │"
-echo "│                            ██║     ██╔══██╗██║   ██║██║███╗██║██║     ██╔══╝    ╚██╔╝                               │"
-echo "│                            ╚██████╗██║  ██║╚██████╔╝╚███╔███╔╝███████╗███████╗   ██║                                │"
-echo "│                             ╚═════╝╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝╚══════╝   ╚═╝                                │"
-echo "│                                                                                           created by Crowley.      │"
-echo "└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘"
+# Run updates automatically
+echo -e "\e[1;32m[INFO] Updating packages...\e[0m"
+apt update -y && apt upgrade -y
+pkg update -y && pkg upgrade -y
+echo -e "\e[1;32m[SUCCESS] Packages updated.\e[0m"
 
-# ASCII art
-echo -e "$color"
+# Banner (ASCII + colors)
+echo -e "\e[1;${RANDOM}m"
+echo "┌──────────────────────────────────────────────────────────────────────────────────────────┐"
+echo "│                                                                                          │"
+echo "│    ██████╗██████╗  ██████╗ ██╗    ██╗██╗     ███████╗██╗   ██╗                            │"
+echo "│   ██╔════╝██╔══██╗██╔═══██╗██║    ██║██║     ██╔════╝╚██╗ ██╔╝                            │"
+echo "│   ██║     ██████╔╝██║   ██║██║ █╗ ██║██║     █████╗   ╚████╔╝                             │"
+echo "│   ██║     ██╔══██╗██║   ██║██║███╗██║██║     ██╔══╝    ╚██╔╝                              │"
+echo "│   ╚██████╗██║  ██║╚██████╔╝╚███╔███╔╝███████╗███████╗   ██║                               │"
+echo "│    ╚═════╝╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝╚══════╝   ╚═╝                               │"
+echo "│                                                                                          │"
+echo "│               created by Crowley. Welcome back, commander.                              │"
+echo "└──────────────────────────────────────────────────────────────────────────────────────────┘"
+echo -e "\e[0m"
+
+# ASCII art with colors
+echo -e "\e[0;37m"
 echo '                                            ..............'
 echo '                                                     ..,;:ccc,.'
 echo "                                                   ......\`lxO."
-echo "                                         .....''''..........,:ld;"
-echo "                                                    .\`;;;:::;,,.x,"
-echo "                                               ..\`\`\`.            0Xxoc:,.  ..."
-echo "                                           ....                ,ONkc;,;cokOdc.-"
-echo "                                          .                   OMo           .:ddo."
-echo "                                                             dMc               :OO;"
-echo "                                                             0M.                 .:o."
-echo "                                                             ;Wd"
-echo "                                                              ;XO,"
-echo "                                                                ,d0Odlc;,.."
-echo "                                                                    ..\`,;:cdOOd::,."
-echo "                                                                            .:d;.\`:;."
-echo "                                                                                \`d,  .\`"
-echo "                                                                                  ;l   .."
-echo "                                                                                        .o"
-echo "                                                                                     c"
-echo "                                                                                     .\`"
-echo "                                                                                      ."
-echo "         ig: croowleey"
+echo "                                         ..''''..........,:ld;"
+echo '                                                    .`;;;:::;,,.x,'
+echo '                                               ..```.            0Xxoc:,.  ...'
+echo '                                           ....                ,ONkc;,;cokOdc.-'
+echo '                                          .                   OMo           .:ddo.'
+echo '                                                             dMc               :OO;'
+echo '                                                             0M.                 .:o.'
+echo '                                                             ;Wd'
+echo '                                                              ;XO,'
+echo '                                                                ,d0Odlc;,..'
+echo '                                                                    ..`,;:cdOOd::,.'
+echo '                                                                            .:d;.`:;.'
+echo '                                                                                `d,  .`'
+echo '                                                                                  ;l   ..'
+echo '                                                                                        .o'
+echo '                                                                                     c'
+echo '                                                                                     .`'
+echo '                                                                                      .'
+echo -e "\e[0;36m         ig: croowleey"
 echo "     tiktok: croowleyy"
 echo "    discord: 21wozy"
 echo "   we all bleed the same..."
 echo -e "\e[0m"
 
-# Auto-update every time Termux starts
-echo -e "\e[1;94m[INFO]\e[0m Updating Termux packages. This may take a sec..."
-apt update -y && apt upgrade -y && pkg update -y && pkg upgrade -y
-echo -e "\e[1;92m[OK]\e[0m Termux is up to date. Time to hack the planet, Crowley!"
+# Plugins: Autosuggestions & Syntax Highlighting
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+ZSH_AUTOSUGGEST_ACCEPT_ON_RIGHT_ARROW=1
+
+source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main)
+
+# History config
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+
+# Final message
+echo -e "\e[1;34m[INIT] System initialized. All modules deployed successfully. Welcome to your command center.\e[0m"
